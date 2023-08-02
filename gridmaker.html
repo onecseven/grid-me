@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>grid me</title>
+    <script>
+
+      function download() {
+        const a = document.createElement('a')
+        const url = document.getElementById("output").toDataURL("image/png")
+        a.href = url
+        a.download = url.split('/').pop()
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)        
+      }
+
+      function reset() {
+        var ctx = document.getElementById("output").getContext("2d")
+        let img = document.getElementById("original")
+        ctx.reset()
+        ctx.drawImage(img, 0, 0)
+      }
+
+      function draw_grid(ctx, h, w, notches) {
+        const w_step = w / 3
+        const h_step = h / 3
+        ctx.lineWidth = 2.5
+            
+        for (let index = 0; index < 4; index++) {
+          var local_h = h_step * index
+          var local_w = w_step * index
+          draw_horizontal: {
+            ctx.beginPath()
+            ctx.moveTo(0, local_h)
+            ctx.lineTo(w, local_h)
+            ctx.stroke()
+          }
+          draw_vertical: {
+            ctx.beginPath()
+            ctx.moveTo(local_w, 0)
+            ctx.lineTo(local_w, h)
+            ctx.stroke()
+          }
+        }
+        if (notches) for (let index = 0; index < 10; index++) {
+          ctx.strokeStyle = "red"
+          var w_notch_unit = w_step / 3
+          var h_notch_unit = h_step / 3
+          var w_notch_step = (w_step / 3) * index 
+          var h_notch_step = (h_step / 3) * index 
+          if (index % 3 === 0) {
+            [1,2,3,4,5,6,7,8,9].forEach(i => {
+              ctx.beginPath()
+              console.log(w_notch_step, w_step)
+              ctx.moveTo(w_notch_step, h_notch_unit*i)
+              ctx.lineTo(w_notch_step-12.5, h_notch_unit*i)
+              ctx.lineTo(w_notch_step+12.5, h_notch_unit*i)
+              ctx.moveTo(w_notch_unit*i, h_notch_step)
+              ctx.lineTo(w_notch_unit*i, h_notch_step-12.5)
+              ctx.lineTo(w_notch_unit*i, h_notch_step+12.5)
+              ctx.stroke()
+          })
+          }
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div>
+
+      <label for="img">Select image:</label>
+      <input type="file" id="img" name="img" accept="image/*" onchange="loadFile(event)" />
+    </div>
+    <image id="original" onload="imageLoaded(event)">
+    <canvas id="output" onClick="download()"/>
+    <script>
+      var imageLoaded = function (event) {
+        var canvas = document.getElementById("output")
+        var ctx = document.getElementById("output").getContext("2d")
+        canvas.height = event.target.height
+        canvas.width = event.target.width
+        console.log(event.target)
+        ctx.drawImage(event.target, 0, 0)
+        event.target.style = "display: none;"
+        draw_grid(ctx, canvas.height, canvas.width, true)
+      }
+
+      var loadFile = function (event) {
+        var orig = document.getElementById("original")
+        orig.src = URL.createObjectURL(event.target.files[0])
+      }
+    </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "grid-me",
+  "version": "0.0.1",
+  "description": "adds a grid to an image",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "icedtati@gmail.com",
+  "license": "WTFPL"
+}
